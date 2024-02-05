@@ -23,6 +23,8 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
   final TextEditingController _kerugianController = TextEditingController();
   final TextEditingController _penangananController = TextEditingController();
   final TextEditingController _keteranganController = TextEditingController();
+  final TextEditingController _jenisKejadianLainnyaController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +57,7 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
                 'Jenis Kejadian Lainnya',
                 TextInputType.text,
                 (value) {},
+                controller: _jenisKejadianLainnyaController,
               ),
             const SizedBox(height: 20),
             _buildDateInput(),
@@ -108,8 +111,9 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
   Widget _buildTextField(
     String label,
     TextInputType inputType,
-    Function(String) onChanged,
-  ) {
+    Function(String) onChanged, {
+    TextEditingController? controller,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -125,6 +129,7 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
       ),
       child: TextField(
         onChanged: (value) => onChanged(value),
+        controller: controller,
         decoration: InputDecoration(
           labelText: label,
           border: InputBorder.none,
