@@ -42,8 +42,7 @@ class _PatroliStorePageState extends State<PatroliStorePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  PatroliForm(), // Gunakan formulir yang telah dibuat sebelumnya
+              builder: (context) => PatroliForm(),
             ),
           ).then((newForm) {
             // Callback ketika formulir baru disubmit
