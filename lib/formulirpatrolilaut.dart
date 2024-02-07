@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PatroliForm extends StatefulWidget {
   const PatroliForm({Key? key}) : super(key: key);
@@ -8,9 +9,8 @@ class PatroliForm extends StatefulWidget {
 }
 
 class _PatroliFormState extends State<PatroliForm> {
-  DateTime?
-      _selectedDate; // Tambahkan variabel untuk menyimpan tanggal terpilih
-  String? _selectedShift; // Tambahkan variabel untuk menyimpan shift terpilih
+  DateTime? _selectedDate;
+  String? _selectedShift;
   final TextEditingController _uraianController = TextEditingController();
   final TextEditingController _keteranganController = TextEditingController();
   final TextEditingController _namaPelaporController = TextEditingController();
@@ -109,7 +109,7 @@ class _PatroliFormState extends State<PatroliForm> {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white, // Warna latar belakang
+        color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
@@ -124,8 +124,8 @@ class _PatroliFormState extends State<PatroliForm> {
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          border: InputBorder.none, // Tidak ada border di dalam TextField
-          contentPadding: EdgeInsets.all(12), // Padding isi input box
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.all(12),
         ),
         keyboardType: inputType,
       ),
@@ -141,16 +141,16 @@ class _PatroliFormState extends State<PatroliForm> {
         Row(
           children: [
             ElevatedButton(
-              onPressed: _takePhoto,
-              child: const Text('Ambil Foto'),
+              onPressed: _showAddPhotoDialog,
+              child: const Text('Tambah Foto'),
               style: ElevatedButton.styleFrom(
-                primary: Colors.white, // Warna latar belakang button
-                onPrimary: Colors.black, // Warna teks button
+                primary: Colors.white,
+                onPrimary: Colors.black,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
                 side: BorderSide(
-                  color: Colors.grey, // Warna border button
+                  color: Colors.grey,
                 ),
               ),
             ),
@@ -165,7 +165,7 @@ class _PatroliFormState extends State<PatroliForm> {
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white, // Warna latar belakang
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
                                 BoxShadow(
@@ -194,10 +194,37 @@ class _PatroliFormState extends State<PatroliForm> {
     );
   }
 
-  void _takePhoto() {
-    setState(() {
-      _photos.add('https://via.placeholder.com/150');
-    });
+  void _showAddPhotoDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Tambah Foto'),
+          content: Column(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _pickImage();
+                },
+                child: const Text('Pilih dari Galeri'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _photos.add(pickedFile.path);
+      });
+    }
   }
 
   void _submitForm() {
