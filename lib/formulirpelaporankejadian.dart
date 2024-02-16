@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MaterialApp(
-    home: PelaporanKejadianForm(),
-  ));
-}
-
 class PelaporanKejadianForm extends StatefulWidget {
   const PelaporanKejadianForm({Key? key}) : super(key: key);
 

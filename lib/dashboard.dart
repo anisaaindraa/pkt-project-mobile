@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'flutter/component/navbar.dart'; // Sesuaikan path sesuai lokasi file
 
-void main() {
-  runApp(const MyApp());
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key});
 
@@ -29,7 +25,7 @@ class Dashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Dashboard'),
+        title: const Text('Patroli PKT'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
