@@ -1,5 +1,58 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:patroli_app/flutter/component/dropdown.dart';
+import 'package:patroli_app/model/patroli_laut_model.dart';
+
+class Network {
+  final String baseUrl;
+
+  Network(this.baseUrl);
+
+  Future<http.Response> postData(String path,
+      {required Map<String, dynamic> body}) async {
+    final response = await http.post(Uri.parse('$baseUrl$path'), body: body);
+    return response;
+  }
+}
+
+class FormulirPatroliLautService {
+  final Network network;
+
+  FormulirPatroliLautService(this.network);
+
+  Future<FormulirPatroliLaut> createFormulirPatroliLaut(
+    int usersId,
+    String tanggalKejadian,
+    int mShiftId,
+    String uraianHasil,
+    String keterangan,
+    List<PhotoPatroliLaut> photoPatroliLaut,
+  ) async {
+    final response = await network.postData(
+      "/api/formpatrolilaut",
+      body: {
+        'users_id': usersId.toString(),
+        'tanggal_kejadian': tanggalKejadian,
+        'm_shift_id': mShiftId.toString(),
+        'uraian_hasil': uraianHasil,
+        'keterangan': keterangan,
+        'photo_patroli_laut': json.encode(
+          photoPatroliLaut
+              .map((photo) => {'photo_path': photo.photo_path})
+              .toList(),
+        ),
+      },
+    );
+    return parseResponse(response.body);
+  }
+
+  FormulirPatroliLaut parseResponse(String responseBody) {
+    final parsed = json.decode(responseBody);
+    return FormulirPatroliLaut.fromJson(parsed);
+  }
+}
 
 class PatroliForm extends StatefulWidget {
   const PatroliForm({Key? key}) : super(key: key);
@@ -9,12 +62,15 @@ class PatroliForm extends StatefulWidget {
 }
 
 class _PatroliFormState extends State<PatroliForm> {
+  final _formulirPatroliLautService =
+      FormulirPatroliLautService('http://127.0.0.1:8000');
+  final _formKey = GlobalKey<FormState>();
+
   DateTime? _selectedDate;
   String? _selectedShift;
   final TextEditingController _uraianController = TextEditingController();
   final TextEditingController _keteranganController = TextEditingController();
-  final TextEditingController _namaPelaporController = TextEditingController();
-  List<String> _photos = [];
+  List<Map<String, dynamic>> _photosList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -24,38 +80,35 @@ class _PatroliFormState extends State<PatroliForm> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            const SizedBox(height: 20),
-            _buildTextField(
-              _namaPelaporController,
-              'Nama Pelapor',
-              TextInputType.text,
-            ),
-            const SizedBox(height: 20),
-            _buildDateInput(),
-            const SizedBox(height: 20),
-            _buildShiftDropdown(),
-            const SizedBox(height: 20),
-            _buildTextField(
-              _uraianController,
-              'Uraian Hasil Patroli',
-              TextInputType.multiline,
-            ),
-            const SizedBox(height: 20),
-            _buildPhotoInput(),
-            const SizedBox(height: 20),
-            _buildTextField(
-              _keteranganController,
-              'Keterangan',
-              TextInputType.multiline,
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: _submitForm,
-              child: const Text('Submit'),
-            ),
-          ],
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              const SizedBox(height: 20),
+              _buildTextField(
+                _uraianController,
+                'Uraian Hasil Patroli',
+                TextInputType.multiline,
+              ),
+              const SizedBox(height: 20),
+              _buildDateInput(),
+              const SizedBox(height: 20),
+              _buildShiftDropdown(),
+              const SizedBox(height: 20),
+              _buildPhotoInput(),
+              const SizedBox(height: 20),
+              _buildTextField(
+                _keteranganController,
+                'Keterangan',
+                TextInputType.multiline,
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: _submitForm,
+                child: const Text('Submit'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -159,32 +212,33 @@ class _PatroliFormState extends State<PatroliForm> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: _photos
-                      .map(
-                        (photo) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
+                  children: _photosList.map((photo) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child:
-                                  Image.network(photo, width: 50, height: 50),
-                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            photo['photo_path'],
+                            width: 50,
+                            height: 50,
                           ),
                         ),
-                      )
-                      .toList(),
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
             ),
@@ -222,26 +276,53 @@ class _PatroliFormState extends State<PatroliForm> {
 
     if (pickedFile != null) {
       setState(() {
-        _photos.add(pickedFile.path);
+        _photosList.add({'photo_path': pickedFile.path});
       });
     }
   }
 
-  void _submitForm() {
-    final tanggal = _selectedDate != null
-        ? _selectedDate!.toLocal().toString().split(' ')[0]
-        : '';
-    final shift = _selectedShift ?? '';
-    final uraian = _uraianController.text;
-    final keterangan = _keteranganController.text;
+void _submitForm() async {
+  final tanggal = _selectedDate != null
+      ? _selectedDate!.toLocal().toString().split(' ')[0]
+      : '';
+  final shift = _selectedShift != null ? int.parse(_selectedShift!) : 0; // Convert to int or provide a default value
+  final uraian = _uraianController.text;
+  final keterangan = _keteranganController.text;
+  final formData = {
+    'usersId': 1, // Replace with actual user ID
+    'tanggalKejadian': tanggal,
+    'mShiftId': shift,
+    'uraianHasil': uraian,
+    'keterangan': keterangan,
+    'photoPatroliLaut': _photosList,
+  };
 
-    print('Tanggal: $tanggal');
-    print('Shift: $shift');
-    print('Uraian Hasil Patroli: $uraian');
-    print('Foto Patroli: $_photos');
-    print('Keterangan: $keterangan');
+  try {
+    // Call the API to create the Formulir Patroli Laut
+    final result =
+        await _formulirPatroliLautService.createFormulirPatroliLaut(
+      formData['usersId'],
+      formData['tanggalKejadian'],
+      formData['mShiftId'],
+      formData['uraianHasil'],
+      formData['keterangan'],
+      formData['photoPatroliLaut'],
+    );
+
+    if (result.success) {
+      print('Formulir Patroli Laut created successfully!');
+      // You can navigate to the store page or perform other actions
+    } else {
+      print(
+          'Failed to create Formulir Patroli Laut. Message: ${result.message}');
+      // Handle the failure, show an error message, etc.
+    }
+  } catch (e) {
+    print('An error occurred: $e');
+    // Handle other errors
   }
 }
+
 
 class CustomDropdown extends StatelessWidget {
   final String? selectedValue;
@@ -267,5 +348,6 @@ class CustomDropdown extends StatelessWidget {
         );
       }).toList(),
     );
+  }
   }
 }

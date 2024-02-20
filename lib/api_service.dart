@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class APIService {
   final Dio _dio = Dio();
+  final String baseUrl = 'http://127.0.0.1:8000/api/';
 
   // Autentikasi
 
@@ -45,8 +46,9 @@ class APIService {
 
   Future<dynamic> createFormulirPatroliLaut(Map<String, dynamic> data) async {
     try {
-      final response = await _dio
-          .post('http://127.0.0.1:8000/api/formpatrolilaut', data: data);
+      final response = await _dio.post(
+          'http://127.0.0.1:8000/api/createFormulirPatroliLaut',
+          data: data);
       return response.data;
     } catch (e) {
       throw e;

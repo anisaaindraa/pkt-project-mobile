@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:patroli_app/model/pelaporan_kejadian_model.dart';
+import 'package:patroli_app/service/pelaporankejadianservice.dart';
+import 'package:intl/intl.dart';
 
 class PelaporanKejadianForm extends StatefulWidget {
   const PelaporanKejadianForm({Key? key}) : super(key: key);
@@ -15,10 +18,18 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
   List<String> _korbanList = [];
   final TextEditingController _uraianController = TextEditingController();
   final TextEditingController _kerugianController = TextEditingController();
-  final TextEditingController _penangananController = TextEditingController();
   final TextEditingController _keteranganController = TextEditingController();
   final TextEditingController _jenisKejadianLainnyaController =
       TextEditingController();
+
+  DateTime? _convertTimeOfDayToDateTime(TimeOfDay? timeOfDay) {
+    if (timeOfDay != null) {
+      final now = DateTime.now();
+      return DateTime(
+          now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +41,6 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            _buildTextField(
-              'Nama Pelapor',
-              TextInputType.text,
-              (value) {},
-            ),
             const SizedBox(height: 20),
             _buildDropdown(
               'Jenis Kejadian',
@@ -76,12 +82,6 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
             const SizedBox(height: 20),
             _buildTextField(
               'Kerugian Akibat Kejadian',
-              TextInputType.multiline,
-              (value) {},
-            ),
-            const SizedBox(height: 20),
-            _buildTextField(
-              'Penanganan Kejadian',
               TextInputType.multiline,
               (value) {},
             ),
@@ -329,20 +329,59 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
     );
   }
 
-  void _submitForm() {
-    // Implementasi logika pengiriman data ke server atau penyimpanan lokal
-    // Gunakan data yang sudah diisi pada state untuk dikirim atau disimpan
-    // Sesuaikan dengan kebutuhan aplikasi Anda
-    print('Nama Pelapor: ${_pelakuList.join(", ")}');
-    print('Jenis Kejadian: $_selectedJenisKejadian');
-    print('Tanggal Kejadian: $_selectedDate');
-    print('Waktu Kejadian: $_selectedTime');
-    print('Tempat Kejadian: ${_uraianController.text}');
-    print('Pelaku: ${_pelakuList.join(", ")}');
-    print('Korban: ${_korbanList.join(", ")}');
-    print('Uraian Kejadian: ${_uraianController.text}');
-    print('Kerugian Akibat Kejadian: ${_kerugianController.text}');
-    print('Penanganan Kejadian: ${_penangananController.text}');
-    print('Keterangan Lain-lain: ${_keteranganController.text}');
+  void _submitForm() async {
+    try {
+      final FormulirPelaporanKejadianService repository =
+          FormulirPelaporanKejadianService('http://127.0.0.1:8000');
+
+      final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+      final DateFormat timeFormat = DateFormat('HH:mm:ss');
+
+      final FormulirPelaporanKejadian response =
+          await repository.createFormulirPelaporanKejadian(
+        usersId: 1,
+        jenisKejadian: _selectedJenisKejadian ?? '',
+        tanggalKejadian: dateFormat.format(_selectedDate ?? DateTime.now()),
+        waktuKejadian: timeFormat.format(
+            _convertTimeOfDayToDateTime(_selectedTime) ?? DateTime.now()),
+        tempatKejadian: _uraianController.text,
+        kerugianAkibatKejadian: _kerugianController.text,
+        keteranganLain: _keteranganController.text,
+        korban: _korbanList.map((data) {
+          List<String> korbanData = data.split(', ');
+          return Korban(
+            namaKorban: korbanData[0],
+            umurKorban: int.parse(korbanData[1]),
+            pekerjaanKorban: korbanData[2],
+            alamatKorban: korbanData[3],
+            noTlpKorban: int.parse(korbanData[4]),
+          );
+        }).toList(),
+        pelaku: _pelakuList.map((data) {
+          List<String> pelakuData = data.split(', ');
+          return Pelaku(
+            namaPelaku: pelakuData[0],
+            umurPelaku: int.parse(pelakuData[1]),
+            pekerjaanPelaku: pelakuData[2],
+            alamatPelaku: pelakuData[3],
+            noTlpPelaku: int.parse(pelakuData[4]),
+          );
+        }).toList(),
+      );
+
+      print('Response from server: ${response.message}');
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 201) {
+        print('Formulir Pelaporan Kejadian created successfully!');
+      } else {
+        print(
+            'Failed to create Formulir Pelaporan Kejadian. Status Code: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error submitting form: $e');
+    }
   }
 }
