@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:patroli_app/flutter/component/app_colors.dart';
+import 'package:patroli_app/formulirpatrolilaut.dart';
 import 'package:patroli_app/formulirpelaporankejadian.dart';
 import 'package:patroli_app/login/login.dart';
 // import 'package:patroli_app/patrolistorepage.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginPage(),
         '/dashboard': (context) => const Dashboard(title: 'Patroli PKT'),
+        '/patroliForm': (context) => FormulirPatroliLautPage(),
         // '/patroliForm': (context) => const PatroliStorePage(),
         '/pelaporankejadianform': (context) => const PelaporanKejadianForm(),
       },

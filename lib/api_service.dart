@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:patroli_app/model/patroli_laut_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class APIService {
@@ -44,12 +45,35 @@ class APIService {
     }
   }
 
-  Future<dynamic> createFormulirPatroliLaut(Map<String, dynamic> data) async {
+  Future<dynamic> createFormulirPatroliLaut(
+    int users_id,
+    String tanggal_kejadian,
+    String m_shift_id,
+    String uraian_hasil,
+    String keterangan,
+    List<PhotoPatroliLaut> photo_patroli_laut,
+  ) async {
     try {
-      final response = await _dio.post(
-          'http://127.0.0.1:8000/api/createFormulirPatroliLaut',
-          data: data);
-      return response.data;
+      final response =
+          await _dio.post('http://127.0.0.1:8000/api/formpatrolilaut', data: {
+        'users_id': users_id,
+        'tanggal_kejadian': tanggal_kejadian,
+        'm_shift_id': m_shift_id,
+        'uraian_hasil': uraian_hasil,
+        'keterangan': keterangan,
+        'photo_patroli_laut':
+            photo_patroli_laut.map((photo) => photo.toJson()).toList(),
+      });
+
+      if (response.data != null) {
+        // handle success
+        print('Formulir Patroli Laut created successfully!');
+        return response.data;
+      } else {
+        // handle failure
+        print('Failed to create Formulir Patroli Laut.');
+        return null;
+      }
     } catch (e) {
       throw e;
     }
@@ -100,6 +124,4 @@ class APIService {
       throw e;
     }
   }
-
-  // Tambahkan fungsi lain sesuai kebutuhan
 }
