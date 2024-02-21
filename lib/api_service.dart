@@ -101,27 +101,4 @@ class APIService {
       throw e;
     }
   }
-
-  // Formulir Pelaksanaan Tugas
-
-  Future<dynamic> getFormulirPelaksanaanTugas() async {
-    try {
-      final response =
-          await _dio.get('http://127.0.0.1:8000/api/formpelaporankejadian');
-      return response.data;
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  Future<dynamic> createFormulirPelaksanaanTugas(
-      Map<String, dynamic> data) async {
-    try {
-      final response = await _dio
-          .post('http://127.0.0.1:8000/api/formpelaporankejadian', data: data);
-      return response.data;
-    } catch (e) {
-      throw e;
-    }
-  }
 }

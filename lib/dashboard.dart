@@ -39,13 +39,6 @@ class Dashboard extends StatelessWidget {
             },
           ),
           FormCard(
-            title: 'Formulir Pelaksanaan Tugas',
-            onTap: () {
-              // Handle navigation to Formulir Pelaksanaan Tugas page
-              print('Navigating to Formulir Pelaksanaan Tugas');
-            },
-          ),
-          FormCard(
             title: 'Formulir Pelaporan Kejadian',
             onTap: () {
               Navigator.pushNamed(context, '/pelaporankejadianform');
