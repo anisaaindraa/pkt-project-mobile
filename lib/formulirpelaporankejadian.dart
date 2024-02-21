@@ -21,6 +21,7 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
   final TextEditingController _keteranganController = TextEditingController();
   final TextEditingController _jenisKejadianLainnyaController =
       TextEditingController();
+  final TextEditingController _penangananController = TextEditingController();
 
   DateTime? _convertTimeOfDayToDateTime(TimeOfDay? timeOfDay) {
     if (timeOfDay != null) {
@@ -84,6 +85,13 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
               'Kerugian Akibat Kejadian',
               TextInputType.multiline,
               (value) {},
+            ),
+            const SizedBox(height: 20),
+            _buildTextField(
+              'Penanganan',
+              TextInputType.text,
+              (value) {},
+              controller: _penangananController,
             ),
             const SizedBox(height: 20),
             _buildTextField(
@@ -335,7 +343,7 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
           FormulirPelaporanKejadianService('http://127.0.0.1:8000');
 
       final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
-      final DateFormat timeFormat = DateFormat('HH:mm:ss');
+      final DateFormat timeFormat = DateFormat('HH:mm');
 
       final FormulirPelaporanKejadian response =
           await repository.createFormulirPelaporanKejadian(
@@ -346,6 +354,7 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
             _convertTimeOfDayToDateTime(_selectedTime) ?? DateTime.now()),
         tempatKejadian: _uraianController.text,
         kerugianAkibatKejadian: _kerugianController.text,
+        penanganan: _penangananController.text,
         keteranganLain: _keteranganController.text,
         korban: _korbanList.map((data) {
           List<String> korbanData = data.split(', ');

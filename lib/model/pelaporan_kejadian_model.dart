@@ -1,59 +1,37 @@
 class FormulirPelaporanKejadian {
-  late bool success;
-  late String message;
-  late FormulirPelaporanKejadianData data;
-
-  FormulirPelaporanKejadian({
-    required this.success,
-    required this.message,
-    required this.data,
-  });
-
-  FormulirPelaporanKejadian.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    message = json['message'];
-    data = FormulirPelaporanKejadianData.fromJson(json['data']);
-  }
-
-  get statusCode => null;
-
-  get body => null;
-}
-
-class FormulirPelaporanKejadianData {
-  late int id;
-  late int usersId;
-  late String jenisKejadian;
-  late String tanggalKejadian;
-  late String waktuKejadian;
-  late String tempatKejadian;
-  late String kerugianAkibatKejadian;
-  late String keteranganLain;
+  late int users_id;
+  late String jenis_kejadian;
+  late String tanggal_kejadian;
+  late String waktu_kejadian;
+  late String tempat_kejadian;
+  late String kerugian_akibat_kejadian;
+  late String penanganan;
+  late String keterangan_lain;
   late List<Korban> korban;
   late List<Pelaku> pelaku;
 
-  FormulirPelaporanKejadianData({
-    required this.id,
-    required this.usersId,
-    required this.jenisKejadian,
-    required this.tanggalKejadian,
-    required this.waktuKejadian,
-    required this.tempatKejadian,
-    required this.kerugianAkibatKejadian,
-    required this.keteranganLain,
+  FormulirPelaporanKejadian({
+    required this.users_id,
+    required this.jenis_kejadian,
+    required this.tanggal_kejadian,
+    required this.waktu_kejadian,
+    required this.tempat_kejadian,
+    required this.kerugian_akibat_kejadian,
+    required this.penanganan,
+    required this.keterangan_lain,
     required this.korban,
     required this.pelaku,
   });
 
-  FormulirPelaporanKejadianData.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    usersId = json['users_id'];
-    jenisKejadian = json['jenis_kejadian'];
-    tanggalKejadian = json['tanggal_kejadian'];
-    waktuKejadian = json['waktu_kejadian'];
-    tempatKejadian = json['tempat_kejadian'];
-    kerugianAkibatKejadian = json['kerugian_akibat_kejadian'];
-    keteranganLain = json['keterangan_lain'];
+  FormulirPelaporanKejadian.fromJson(Map<String, dynamic> json) {
+    users_id = json['users_id'];
+    jenis_kejadian = json['jenis_kejadian'];
+    tanggal_kejadian = json['tanggal_kejadian'];
+    waktu_kejadian = json['waktu_kejadian'];
+    tempat_kejadian = json['tempat_kejadian'];
+    kerugian_akibat_kejadian = json['kerugian_akibat_kejadian'];
+    penanganan = json['penanganan'];
+    keterangan_lain = json['keterangan_lain'];
 
     if (json['korban'] != null) {
       korban = List<Korban>.from(
@@ -72,49 +50,49 @@ class FormulirPelaporanKejadianData {
 }
 
 class Korban {
-  late String namaKorban;
-  late int umurKorban;
-  late String pekerjaanKorban;
-  late String alamatKorban;
-  late int noTlpKorban;
+  late String nama_korban;
+  late int umur_korban;
+  late String pekerjaan_korban;
+  late String alamat_korban;
+  late int no_tlp_korban;
 
   Korban({
-    required this.namaKorban,
-    required this.umurKorban,
-    required this.pekerjaanKorban,
-    required this.alamatKorban,
-    required this.noTlpKorban,
+    required this.nama_korban,
+    required this.umur_korban,
+    required this.pekerjaan_korban,
+    required this.alamat_korban,
+    required this.no_tlp_korban,
   });
 
   Korban.fromJson(Map<String, dynamic> json) {
-    namaKorban = json['nama_korban'];
-    umurKorban = json['umur_korban'];
-    pekerjaanKorban = json['pekerjaan_korban'];
-    alamatKorban = json['alamat_korban'];
-    noTlpKorban = json['no_tlp_korban'];
+    nama_korban = json['nama_korban'];
+    umur_korban = json['umur_korban'];
+    pekerjaan_korban = json['pekerjaan_korban'];
+    alamat_korban = json['alamat_korban'];
+    no_tlp_korban = json['no_tlp_korban'];
   }
 }
 
 class Pelaku {
-  late String namaPelaku;
-  late int umurPelaku;
-  late String pekerjaanPelaku;
-  late String alamatPelaku;
-  late int noTlpPelaku;
+  late String nama_pelaku;
+  late int umur_pelaku;
+  late String pekerjaan_pelaku;
+  late String alamat_pelaku;
+  late int no_tlp_pelaku;
 
   Pelaku({
-    required this.namaPelaku,
-    required this.umurPelaku,
-    required this.pekerjaanPelaku,
-    required this.alamatPelaku,
-    required this.noTlpPelaku,
+    required this.nama_pelaku,
+    required this.umur_pelaku,
+    required this.pekerjaan_pelaku,
+    required this.alamat_pelaku,
+    required this.no_tlp_pelaku,
   });
 
   Pelaku.fromJson(Map<String, dynamic> json) {
-    namaPelaku = json['nama_pelaku'];
-    umurPelaku = json['umur_pelaku'];
-    pekerjaanPelaku = json['pekerjaan_pelaku'];
-    alamatPelaku = json['alamat_pelaku'];
-    noTlpPelaku = json['no_tlp_pelaku'];
+    nama_pelaku = json['nama_pelaku'];
+    umur_pelaku = json['umur_pelaku'];
+    pekerjaan_pelaku = json['pekerjaan_pelaku'];
+    alamat_pelaku = json['alamat_pelaku'];
+    no_tlp_pelaku = json['no_tlp_pelaku'];
   }
 }
