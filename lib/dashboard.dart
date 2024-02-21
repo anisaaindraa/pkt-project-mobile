@@ -33,7 +33,7 @@ class Dashboard extends StatelessWidget {
           FormCard(
             title: 'Formulir Patroli Laut',
             onTap: () {
-              Navigator.pushNamed(context, '/patroliForm');
+              Navigator.pushNamed(context, '/patrolistoreForm');
               // Handle navigation to Formulir Patroli Laut page
               print('Navigating to Formulir Patroli Laut');
             },
