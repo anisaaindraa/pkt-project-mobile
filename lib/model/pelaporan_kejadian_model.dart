@@ -1,8 +1,7 @@
 class FormulirPelaporanKejadian {
   late int users_id;
   late String jenis_kejadian;
-  late String tanggal_kejadian;
-  late String waktu_kejadian;
+  late DateTime tanggal_waktu_kejadian;
   late String tempat_kejadian;
   late String kerugian_akibat_kejadian;
   late String penanganan;
@@ -13,8 +12,7 @@ class FormulirPelaporanKejadian {
   FormulirPelaporanKejadian({
     required this.users_id,
     required this.jenis_kejadian,
-    required this.tanggal_kejadian,
-    required this.waktu_kejadian,
+    required this.tanggal_waktu_kejadian,
     required this.tempat_kejadian,
     required this.kerugian_akibat_kejadian,
     required this.penanganan,
@@ -26,8 +24,7 @@ class FormulirPelaporanKejadian {
   FormulirPelaporanKejadian.fromJson(Map<String, dynamic> json) {
     users_id = json['users_id'];
     jenis_kejadian = json['jenis_kejadian'];
-    tanggal_kejadian = json['tanggal_kejadian'];
-    waktu_kejadian = json['waktu_kejadian'];
+    tanggal_waktu_kejadian = DateTime.parse(json['tanggal_waktu_kejadian']);
     tempat_kejadian = json['tempat_kejadian'];
     kerugian_akibat_kejadian = json['kerugian_akibat_kejadian'];
     penanganan = json['penanganan'];
@@ -71,6 +68,16 @@ class Korban {
     alamat_korban = json['alamat_korban'];
     no_tlp_korban = json['no_tlp_korban'];
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nama_korban': nama_korban,
+      'umur_korban': umur_korban,
+      'pekerjaan_korban': pekerjaan_korban,
+      'alamat_korban': alamat_korban,
+      'no_tlp_korban': no_tlp_korban,
+    };
+  }
 }
 
 class Pelaku {
@@ -94,5 +101,15 @@ class Pelaku {
     pekerjaan_pelaku = json['pekerjaan_pelaku'];
     alamat_pelaku = json['alamat_pelaku'];
     no_tlp_pelaku = json['no_tlp_pelaku'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nama_pelaku': nama_pelaku,
+      'umur_pelaku': umur_pelaku,
+      'pekerjaan_pelaku': pekerjaan_pelaku,
+      'alamat_pelaku': alamat_pelaku,
+      'no_tlp_pelaku': no_tlp_pelaku,
+    };
   }
 }

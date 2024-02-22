@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:patroli_app/model/patroli_laut_model.dart';
+import 'package:patroli_app/model/pelaporan_kejadian_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class APIService {
@@ -83,8 +84,8 @@ class APIService {
 
   Future<dynamic> getFormulirPelaporanKejadian() async {
     try {
-      final response =
-          await _dio.get('http://127.0.0.1:8000/api/formpelaporankejadian');
+      final response = await _dio
+          .get('http://127.0.0.1:8000/api/formpelaporankejadian/{id}');
       return response.data;
     } catch (e) {
       throw e;
@@ -92,11 +93,36 @@ class APIService {
   }
 
   Future<dynamic> createFormulirPelaporanKejadian(
-      Map<String, dynamic> data) async {
+    int users_id,
+    String jenis_kejadian,
+    String tanggal_waktu_kejadian,
+    String tempat_kejadian,
+    String kerugian_akibat_kejadian,
+    String penanganan,
+    String keterangan_lain,
+    List<Korban> korban,
+    List<Pelaku> pelaku,
+  ) async {
     try {
       final response = await _dio
-          .post('http://127.0.0.1:8000/api/formpelaporankejadian', data: data);
-      return response.data;
+          .post('http://127.0.0.1:8000/api/formpelaporankejadian', data: {
+        'users_id': users_id,
+        'tanggal_waktu_kejadian': tanggal_waktu_kejadian,
+        'tempat_kejadian': tempat_kejadian,
+        'kerugian_akibat_kejadian': kerugian_akibat_kejadian,
+        'penanganan': penanganan,
+        'keterangan_lain': keterangan_lain,
+        'korban': korban.map((korban) => korban.toJson()).toList(),
+        'pelaku': korban.map((korban) => korban.toJson()).toList(),
+      });
+
+      if (response.data != null) {
+        print("Formulir Pelaporan Kejadian created succesfully");
+        return response.data;
+      } else {
+        print('Failed to create Formulir Pelaporan Kejadian');
+        return null;
+      }
     } catch (e) {
       throw e;
     }

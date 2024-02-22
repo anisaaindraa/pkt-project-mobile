@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:patroli_app/flutter/component/app_colors.dart';
 import 'package:patroli_app/formulirpatrolilaut.dart';
+import 'package:patroli_app/formulirpelaporankejadian.dart';
 // import 'package:patroli_app/formulirpelaporankejadian.dart';
 import 'package:patroli_app/login/login.dart';
 import 'package:patroli_app/patrolistorepage.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) => const Dashboard(title: 'Patroli PKT'),
         '/patroliForm': (context) => FormulirPatroliLautPage(),
         '/patrolistoreForm': (context) => const PatroliStorePage(),
-        // '/pelaporankejadianform': (context) => const PelaporanKejadianForm(),
+        '/pelaporankejadianform': (context) => PelaporanKejadianForm(),
       },
     );
   }
@@ -70,13 +71,6 @@ class _DashboardState extends State<Dashboard> {
             title: 'Formulir Patroli Laut',
             onTap: () {
               Navigator.pushNamed(context, '/patroliForm');
-            },
-          ),
-          FormCard(
-            title: 'Formulir Pelaksanaan Tugas',
-            onTap: () {
-              // Handle navigation to Formulir Pelaksanaan Tugas page
-              print('Navigating to Formulir Pelaksanaan Tugas');
             },
           ),
           FormCard(

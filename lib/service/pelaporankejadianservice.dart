@@ -6,8 +6,7 @@ class FormulirPelaporanKejadianRepository {
   Future<FormulirPelaporanKejadian?> createFormulirPelaporanKejadian({
     required int usersId,
     required String jenisKejadian,
-    required String tanggalKejadian,
-    required String waktuKejadian,
+    required String tanggalWaktuKejadian,
     required String tempatKejadian,
     required String kerugianAkibatKejadian,
     required String penanganan,
@@ -23,8 +22,7 @@ class FormulirPelaporanKejadianRepository {
         body: {
           'users_id': usersId.toString(),
           'jenis_kejadian': jenisKejadian,
-          'tanggal_kejadian': tanggalKejadian,
-          'waktu_kejadian': waktuKejadian,
+          'tanggal_waktu_kejadian': tanggalWaktuKejadian,
           'tempat_kejadian': tempatKejadian,
           'kerugian_akibat_kejadian': kerugianAkibatKejadian,
           'penanganan': penanganan,
