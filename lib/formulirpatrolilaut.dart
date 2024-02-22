@@ -206,7 +206,6 @@ class _FormulirPatroliLautPageState extends State<FormulirPatroliLautPage> {
           FormulirPatroliLautRepository();
 
       await repository.createFormulirPatroliLaut(
-        1,
         selectedTanggalKejadian.toString(),
         selectedMShiftId.toString(),
         uraianHasil,
@@ -214,6 +213,8 @@ class _FormulirPatroliLautPageState extends State<FormulirPatroliLautPage> {
         [PhotoPatroliLaut(photo_path: selectedPhotoPath!.path)],
         'Your Device ID',
       );
+
+      Navigator.pop(context);
     } catch (e) {
       print('Error creating FormulirPatroliLaut: $e');
     }

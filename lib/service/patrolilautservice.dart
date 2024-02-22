@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:patroli_app/model/patroli_laut_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:patroli_app/repository/auth_repository.dart'; // Import your authentication service
 
 class FormulirPatroliLautRepository {
   Future<FormulirPatroliLaut?> createFormulirPatroliLaut(
-    int usersId,
-    String tanggalKejadian,
+    String tanggalWaktuKejadian,
     String? mShiftId,
     String uraianHasil,
     String keterangan,
@@ -15,11 +15,14 @@ class FormulirPatroliLautRepository {
     String baseUrl = "http://127.0.0.1:8000/api/formpatrolilaut";
 
     try {
+      // Assuming your_auth_service.getCurrentUser() returns the user ID
+      var userId = await AuthRepository().getCurrentUser();
       final response = await http.post(
         Uri.parse(baseUrl),
         body: {
-          'users_id': usersId.toString(),
-          'tanggal_kejadian': tanggalKejadian,
+          'users_id': userId
+              .toString(), // Use the user ID obtained from the authentication service
+          'tanggal_waktu_kejadian': tanggalWaktuKejadian,
           'm_shift_id': mShiftId ?? '',
           'uraian_hasil': uraianHasil,
           'keterangan': keterangan,
@@ -38,7 +41,7 @@ class FormulirPatroliLautRepository {
         return null;
       }
     } catch (e) {
-      print('Error creating FormulirPatroliLaut: $e');
+      // print('Error creating FormulirPatroliLaut: $e');
       return null;
     }
   }

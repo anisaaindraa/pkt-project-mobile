@@ -100,8 +100,8 @@ class APIService {
     String kerugian_akibat_kejadian,
     String penanganan,
     String keterangan_lain,
-    List<Korban> korban,
-    List<Pelaku> pelaku,
+    List korban,
+    List pelaku,
   ) async {
     try {
       final response = await _dio
@@ -112,8 +112,8 @@ class APIService {
         'kerugian_akibat_kejadian': kerugian_akibat_kejadian,
         'penanganan': penanganan,
         'keterangan_lain': keterangan_lain,
-        'korban': korban.map((korban) => korban.toJson()).toList(),
-        'pelaku': korban.map((korban) => korban.toJson()).toList(),
+        'korban': korban,
+        'pelaku': pelaku,
       });
 
       if (response.data != null) {

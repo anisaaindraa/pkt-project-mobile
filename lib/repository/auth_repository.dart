@@ -2,8 +2,11 @@ import 'dart:convert'; // Import the 'dart:convert' library for json.decode
 import 'package:http/http.dart' as http;
 import 'package:patroli_app/model/data_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthRepository {
+  final _storage = FlutterSecureStorage();
+
   Future loginUser(String _email, String _password, String device) async {
     String baseUrl = "http://127.0.0.1:8000/api/login";
 
@@ -24,6 +27,34 @@ class AuthRepository {
       }
     } catch (e) {
       // Handle exceptions, you might want to throw an exception here
+      return null;
+    }
+  }
+
+  Future getCurrentUser() async {
+    var token = await _storage.read(key: 'jwtToken');
+    String baseUrl = 'http://127.0.0.1:8000/api/getuserid';
+    try {
+      var response = await http.get(
+        Uri.parse(baseUrl),
+        headers: {
+          'Authorization': '$token',
+          'Accept': 'application/json',
+        },
+      );
+
+      // Process the response as needed
+      if (response.statusCode == 200) {
+        // Successful response, you can handle the data here
+        var body = json.decode(response.body);
+        return body['user_id'];
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error: $e');
       return null;
     }
   }

@@ -1,6 +1,8 @@
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:patroli_app/model/pelaporan_kejadian_model.dart';
+import 'package:patroli_app/service/pelaporankejadianservice.dart';
 
 class PelaporanKejadianForm extends StatefulWidget {
   @override
@@ -8,14 +10,17 @@ class PelaporanKejadianForm extends StatefulWidget {
 }
 
 class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+
   String selectedJenisKejadian = '';
   DateTime? selectedTanggalWaktuKejadian;
-  TextEditingController _tempatController = TextEditingController();
-  TextEditingController _uraianController = TextEditingController();
-  TextEditingController _kerugianController = TextEditingController();
-  TextEditingController _penangananController = TextEditingController();
-  TextEditingController _keteranganController = TextEditingController();
+  TextEditingController tempatController = TextEditingController();
+  TextEditingController uraianController = TextEditingController();
+  TextEditingController kerugianController = TextEditingController();
+  TextEditingController penangananController = TextEditingController();
+  TextEditingController keteranganController = TextEditingController();
+  List KorbanController = [];
+  List PelakuController = [];
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +32,6 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          // Wrap with SingleChildScrollView
           child: Form(
             key: _formKey,
             child: Column(
@@ -69,10 +73,16 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
                     filled: true,
                     fillColor: Colors.white,
                   ),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Pilih Jenis Kejadian';
+                    }
+                    return null;
+                  },
                 ),
                 if (selectedJenisKejadian == 'lain-lain')
                   TextFormField(
-                    controller: _uraianController,
+                    controller: uraianController,
                     decoration: InputDecoration(
                       labelText: 'Jenis Kejadian Lainnya',
                       filled: true,
@@ -115,7 +125,7 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
                 ),
                 SizedBox(height: 30),
                 TextFormField(
-                  controller: _tempatController,
+                  controller: tempatController,
                   decoration: InputDecoration(
                     labelText: 'Tempat Kejadian',
                     border: OutlineInputBorder(
@@ -123,6 +133,12 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
                     filled: true,
                     fillColor: Colors.white,
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Masukkan Tempat Kejadian';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 30),
                 Row(
@@ -159,7 +175,7 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
                 ),
                 SizedBox(height: 30.0),
                 TextFormField(
-                  controller: _uraianController,
+                  controller: uraianController,
                   decoration: InputDecoration(
                     labelText: 'Uraian Kejadian',
                     border: OutlineInputBorder(
@@ -167,10 +183,16 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
                     filled: true,
                     fillColor: Colors.white,
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Masukkan Uraian Kejadian';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 30),
                 TextFormField(
-                  controller: _kerugianController,
+                  controller: kerugianController,
                   decoration: InputDecoration(
                     labelText: 'Kerugian Akibat Kejadian',
                     border: OutlineInputBorder(
@@ -178,21 +200,33 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
                     filled: true,
                     fillColor: Colors.white,
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Masukkan Kerugian Akibat Kejadian';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 30),
                 TextFormField(
-                  controller: _penangananController,
+                  controller: penangananController,
                   decoration: InputDecoration(
-                    labelText: 'Penanganan Kerugian',
+                    labelText: 'Penanganan Kejadian/Peristiwa',
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0)),
                     filled: true,
                     fillColor: Colors.white,
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Masukkan Penanganan Kejadian/Peristiwa';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 30),
                 TextFormField(
-                  controller: _keteranganController,
+                  controller: keteranganController,
                   decoration: InputDecoration(
                     labelText: 'Keterangan Lain',
                     border: OutlineInputBorder(
@@ -200,12 +234,18 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
                     filled: true,
                     fillColor: Colors.white,
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Masukkan Keterangan Lain';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 30.0),
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Call your API service to submit the form
+                      createFormulirPelaporanKejadian();
                     }
                   },
                   child: Text(
@@ -227,11 +267,11 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
   }
 
   Future<void> _showKorbanDialog(BuildContext context) async {
-    TextEditingController _namaKorbanController = TextEditingController();
-    TextEditingController _umurKorbanController = TextEditingController();
-    TextEditingController _pekerjaanKorbanController = TextEditingController();
-    TextEditingController _alamatKorbanController = TextEditingController();
-    TextEditingController _noTlpKorbanController = TextEditingController();
+    TextEditingController namaKorbanController = TextEditingController();
+    TextEditingController umurKorbanController = TextEditingController();
+    TextEditingController pekerjaanKorbanController = TextEditingController();
+    TextEditingController alamatKorbanController = TextEditingController();
+    TextEditingController noTlpKorbanController = TextEditingController();
 
     return showDialog<void>(
       context: context,
@@ -241,23 +281,23 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
           content: Column(
             children: [
               TextFormField(
-                controller: _namaKorbanController,
+                controller: namaKorbanController,
                 decoration: InputDecoration(labelText: 'Nama Korban'),
               ),
               TextFormField(
-                controller: _umurKorbanController,
+                controller: umurKorbanController,
                 decoration: InputDecoration(labelText: 'Umur Korban'),
               ),
               TextFormField(
-                controller: _pekerjaanKorbanController,
+                controller: pekerjaanKorbanController,
                 decoration: InputDecoration(labelText: 'Pekerjaan Korban'),
               ),
               TextFormField(
-                controller: _alamatKorbanController,
+                controller: alamatKorbanController,
                 decoration: InputDecoration(labelText: 'Alamat Korban'),
               ),
               TextFormField(
-                controller: _noTlpKorbanController,
+                controller: noTlpKorbanController,
                 decoration: InputDecoration(labelText: 'No. Telp Korban'),
               ),
             ],
@@ -272,19 +312,26 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
             TextButton(
               onPressed: () {
                 // Add logic to save Korban details
-                String namaKorban = _namaKorbanController.text;
-                String umurKorban = _umurKorbanController.text;
-                String pekerjaanKorban = _pekerjaanKorbanController.text;
-                String alamatKorban = _alamatKorbanController.text;
-                String noTlpKorban = _noTlpKorbanController.text;
+                String namaKorban = namaKorbanController.text;
+                String umurKorban = umurKorbanController.text;
+                String pekerjaanKorban = pekerjaanKorbanController.text;
+                String alamatKorban = alamatKorbanController.text;
+                String noTlpKorban = noTlpKorbanController.text;
 
                 // Do something with the Korban details
-                print('Nama Korban: $namaKorban');
-                print('Umur Korban: $umurKorban');
-                print('Pekerjaan Korban: $pekerjaanKorban');
-                print('Alamat Korban: $alamatKorban');
-                print('No. Telp Korban: $noTlpKorban');
+                // print('Nama Korban: $namaKorban');
+                // print('Umur Korban: $umurKorban');
+                // print('Pekerjaan Korban: $pekerjaanKorban');
+                // print('Alamat Korban: $alamatKorban');
+                // print('No. Telp Korban: $noTlpKorban');
 
+                KorbanController.add({
+                  "nama_korban": '$namaKorban',
+                  "umur_korban": umurKorban,
+                  "pekerjaan_korban": '$pekerjaanKorban',
+                  "alamat_korban": '$alamatKorban',
+                  "no_tlp_korban": noTlpKorban,
+                });
                 Navigator.of(context).pop();
               },
               child: Text('Simpan'),
@@ -296,11 +343,11 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
   }
 
   Future<void> _showPelakuDialog(BuildContext context) async {
-    TextEditingController _namaPelakuController = TextEditingController();
-    TextEditingController _umurPelakuController = TextEditingController();
-    TextEditingController _pekerjaanPelakuController = TextEditingController();
-    TextEditingController _alamatPelakuController = TextEditingController();
-    TextEditingController _noTlpPelakuController = TextEditingController();
+    TextEditingController namaPelakuController = TextEditingController();
+    TextEditingController umurPelakuController = TextEditingController();
+    TextEditingController pekerjaanPelakuController = TextEditingController();
+    TextEditingController alamatPelakuController = TextEditingController();
+    TextEditingController noTlpPelakuController = TextEditingController();
 
     return showDialog<void>(
       context: context,
@@ -310,23 +357,23 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
           content: Column(
             children: [
               TextFormField(
-                controller: _namaPelakuController,
+                controller: namaPelakuController,
                 decoration: InputDecoration(labelText: 'Nama Pelaku'),
               ),
               TextFormField(
-                controller: _umurPelakuController,
+                controller: umurPelakuController,
                 decoration: InputDecoration(labelText: 'Umur Pelaku'),
               ),
               TextFormField(
-                controller: _pekerjaanPelakuController,
+                controller: pekerjaanPelakuController,
                 decoration: InputDecoration(labelText: 'Pekerjaan Pelaku'),
               ),
               TextFormField(
-                controller: _alamatPelakuController,
+                controller: alamatPelakuController,
                 decoration: InputDecoration(labelText: 'Alamat Pelaku'),
               ),
               TextFormField(
-                controller: _noTlpPelakuController,
+                controller: noTlpPelakuController,
                 decoration: InputDecoration(labelText: 'No. Telp Pelaku'),
               ),
             ],
@@ -340,20 +387,25 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
             ),
             TextButton(
               onPressed: () {
-                // Add logic to save Pelaku details
-                String namaPelaku = _namaPelakuController.text;
-                String umurPelaku = _umurPelakuController.text;
-                String pekerjaanPelaku = _pekerjaanPelakuController.text;
-                String alamatPelaku = _alamatPelakuController.text;
-                String noTlpPelaku = _noTlpPelakuController.text;
+                String namaPelaku = namaPelakuController.text;
+                String umurPelaku = umurPelakuController.text;
+                String pekerjaanPelaku = pekerjaanPelakuController.text;
+                String alamatPelaku = alamatPelakuController.text;
+                String noTlpPelaku = noTlpPelakuController.text;
 
-                // Do something with the Pelaku details
-                print('Nama Pelaku: $namaPelaku');
-                print('Umur Pelaku: $umurPelaku');
-                print('Pekerjaan Pelaku: $pekerjaanPelaku');
-                print('Alamat Pelaku: $alamatPelaku');
-                print('No. Telp Pelaku: $noTlpPelaku');
+                // print('Nama Pelaku: $namaPelaku');
+                // print('Umur Pelaku: $umurPelaku');
+                // print('Pekerjaan Pelaku: $pekerjaanPelaku');
+                // print('Alamat Pelaku: $alamatPelaku');
+                // print('No. Telp Pelaku: $noTlpPelaku');
 
+                PelakuController.add({
+                  "nama_pelaku": '$namaPelaku',
+                  "umur_pelaku": umurPelaku,
+                  "pekerjaan_pelaku": '$pekerjaanPelaku',
+                  "alamat_pelaku": '$alamatPelaku',
+                  "no_tlp_pelaku": noTlpPelaku,
+                });
                 Navigator.of(context).pop();
               },
               child: Text('Simpan'),
@@ -362,5 +414,57 @@ class _PelaporanKejadianFormState extends State<PelaporanKejadianForm> {
         );
       },
     );
+  }
+
+  void createFormulirPelaporanKejadian() async {
+    try {
+      String tempatKejadian = tempatController.text;
+      String kerugianAkibatKejadian = kerugianController.text;
+      String penanganan = penangananController.text;
+      String keteranganLain = keteranganController.text;
+
+      if (selectedJenisKejadian.isEmpty ||
+          selectedTanggalWaktuKejadian == null) {
+        return;
+      }
+
+      // Replace the placeholders with actual values from your dialog
+      String namaKorban = ''; // Replace with actual value
+      int umurKorban = 0; // Replace with actual value
+      String pekerjaanKorban = ''; // Replace with actual value
+      String alamatKorban = ''; // Replace with actual value
+      int noTlpKorban = 0; // Replace with actual value
+
+      // Replace the placeholders with actual values from your dialog
+      String namaPelaku = ''; // Replace with actual value
+      int umurPelaku = 0; // Replace with actual value
+      String pekerjaanPelaku = ''; // Replace with actual value
+      String alamatPelaku = ''; // Replace with actual value
+      int noTlpPelaku = 0; // Replace with actual value
+
+      FormulirPelaporanKejadianRepository repository =
+          FormulirPelaporanKejadianRepository();
+      // print(selectedJenisKejadian);
+      // print(selectedTanggalWaktuKejadian);
+      // print(tempatKejadian);
+      // print(kerugianAkibatKejadian);
+      // print(penanganan);
+      // print(keteranganLain);
+      // print(KorbanController);
+      // print(PelakuController);
+      await repository.createFormulirPelaporanKejadian(
+        jenisKejadian: selectedJenisKejadian,
+        tanggalWaktuKejadian: selectedTanggalWaktuKejadian.toString(),
+        tempatKejadian: tempatKejadian,
+        kerugianAkibatKejadian: kerugianAkibatKejadian,
+        penanganan: penanganan,
+        keteranganLain: keteranganLain,
+        korban: KorbanController,
+        pelaku: PelakuController,
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      print('Error creating FormulirPelaporanKejadian: $e');
+    }
   }
 }

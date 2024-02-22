@@ -129,7 +129,7 @@ class PelaporanKejadianFormData {
       FormulirPelaporanKejadian data) {
     return PelaporanKejadianFormData(
       selectedJenisKejadian: data.jenis_kejadian,
-      selectedTanggalWaktuKejadian: data.tanggal_waktu_kejadian,
+      selectedTanggalWaktuKejadian: data.tanggal_kejadian,
       tempatKejadian: data.tempat_kejadian,
       penanganan: data.penanganan,
       keterangan: data.keterangan_lain,

@@ -1,7 +1,7 @@
 class FormulirPelaporanKejadian {
   late int users_id;
   late String jenis_kejadian;
-  late DateTime tanggal_waktu_kejadian;
+  late DateTime tanggal_kejadian;
   late String tempat_kejadian;
   late String kerugian_akibat_kejadian;
   late String penanganan;
@@ -12,7 +12,7 @@ class FormulirPelaporanKejadian {
   FormulirPelaporanKejadian({
     required this.users_id,
     required this.jenis_kejadian,
-    required this.tanggal_waktu_kejadian,
+    required this.tanggal_kejadian,
     required this.tempat_kejadian,
     required this.kerugian_akibat_kejadian,
     required this.penanganan,
@@ -24,7 +24,7 @@ class FormulirPelaporanKejadian {
   FormulirPelaporanKejadian.fromJson(Map<String, dynamic> json) {
     users_id = json['users_id'];
     jenis_kejadian = json['jenis_kejadian'];
-    tanggal_waktu_kejadian = DateTime.parse(json['tanggal_waktu_kejadian']);
+    tanggal_kejadian = DateTime.parse(json['tanggal_kejadian']);
     tempat_kejadian = json['tempat_kejadian'];
     kerugian_akibat_kejadian = json['kerugian_akibat_kejadian'];
     penanganan = json['penanganan'];
