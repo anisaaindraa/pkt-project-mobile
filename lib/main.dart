@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:patroli_app/flutter/component/app_colors.dart';
 import 'package:patroli_app/formulirpatrolilaut.dart';
 import 'package:patroli_app/formulirpelaporankejadian.dart';
-// import 'package:patroli_app/formulirpelaporankejadian.dart';
+import 'package:patroli_app/kejadianstorepage.dart';
 import 'package:patroli_app/login/login.dart';
 import 'package:patroli_app/patrolistorepage.dart';
-// import 'package:patroli_app/patrolistorepage.dart';
 import 'config.dart';
 
 void main() {
@@ -39,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/patroliForm': (context) => FormulirPatroliLautPage(),
         '/patrolistoreForm': (context) => const PatroliStorePage(),
         '/pelaporankejadianform': (context) => PelaporanKejadianForm(),
+        '/kejadianform': (context) => const KejadianStorePage(),
       },
     );
   }
